@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACHERE ILUMINACION MEXICO: LISTAS</title>
+<link rel="icon" type="image/x-icon" href="css/ico.ico">
+<link rel="stylesheet" href="css/tabla1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="close-btn" onclick="toggleMenu()">✖</span>
+    </div>
+    <a href="sistemas.html">Registro</a>
+    <a href="#">Lista de registro</a>
+    <a href="perfil.html">Perfil</a>
+    <a href="usuarios/mis_solicitudes.html">mis solicitudes</a>
+    <a href="usuarios/ver_usuarios.html">Usuarios</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</div>
+
+<div class="topbar">
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <h3 class="titulo-topbar">Solicitudes Para Sistemas</h3>
+</div>
+
+<h1>Lista de registros</h1>
+<h3 id="contador"></h3>
+<div class="tabla-container">
+<table border="1" id="tablaRegistros">
+    <thead>
+    <tr>
+    <th>Fecha solicitud</th>
+    <th>Hora solicitud</th>
+    <th>Solicitante</th>
+    <th>Urgencia</th>
+    <th>Origen</th>
+    <th>Obs. solicitante</th>
+    <th>Fecha</th>
+    <th>Hora</th>
+    <th>Estado</th>
+    <th>Obs. general</th>
+    <th>Acciones</th>
+    </tr>
+    </thead>
+
+<tbody id="lista"></tbody>
+</table>
+</div>
+
+<div class="botones-final">
+<button onclick="window.location.href='sistemas.html'">Regresar</button>
+<button onclick="abrirFecha()">Eliminar registros por fecha</button>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3 id="confirmTexto">¿Confirmar?</h3>
+    <center>
+      <button onclick="confirmarAccion(true)">Aceptar</button>
+      <button onclick="confirmarAccion(false)">Cancelar</button>
+    </center>
+  </div>
+</div>
+
+<div id="fechaModal" class="modal">
+  <div class="modal-content">
+    <h3>Eliminar por fecha</h3>
+    <input type="date" id="fechaEliminar">
+    <p id="mensajeFecha" class="mensaje"></p>
+    <center>
+      <button onclick="eliminarPorFecha()">Eliminar</button>
+      <button onclick="cerrarFecha()">Cancelar</button>
+    </center>
+  </div>
+</div>
+
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Cerrar sesión</h3>
+    <p>¿Seguro que deseas salir?</p>
+    <div style="margin-top:15px;">
+        <center>
+      <button onclick="confirmarLogout()" style="background:#dc3545;color:white;">Sí, salir</button>
+      <button onclick="cerrarLogout()" style="margin-left:10px;">Cancelar</button>
+    </center>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+
+function cerrarSesion(){
+    document.getElementById("logoutModal").style.display = "flex";
+}
+
+function cerrarLogout(){
+    document.getElementById("logoutModal").style.display = "none";
+}
+
+function confirmarLogout(){
+    fetch("https://blacheres-app.onrender.com/logout.php")
+    .then(()=>{
+        localStorage.clear();
+        window.location.href = "index.html";
+    })
+    .catch(()=>{
+        alert("Error al cerrar sesión");
+    });
+}
+
+function mostrarToast(mensaje){
+    let toast = document.getElementById("toast");
+    toast.innerText = mensaje;
+    toast.className = "toast show";
+    setTimeout(()=>{ toast.className = "toast"; },3000);
+}
+
+let callbackConfirm = null;
+function mostrarConfirm(mensaje, callback){
+    document.getElementById("confirmTexto").innerText = mensaje;
+    document.getElementById("confirmModal").style.display = "flex";
+    callbackConfirm = callback;
+}
+
+function confirmarAccion(respuesta){
+    document.getElementById("confirmModal").style.display = "none";
+    if(callbackConfirm) callbackConfirm(respuesta);
+}
+
+function toggleMenu(){
+    let sidebar = document.getElementById("sidebar");
+    if(sidebar.style.left === "0px"){
+        sidebar.style.left = "-260px";
+    }else{
+        sidebar.style.left = "0px";
+    }
+}
+
+// ================= CONTROL DE SESIÓN Y MENÚ =================
+fetch("https://blacheres-app.onrender.com/sesion.php")
+.then(res => res.json())
+.then(data => {
+
+    if(data === "NO"){
+        window.location.href = "index.html";
+        return;
+    }
+
+    let tipo = data.tipo;
+    let sidebar = document.getElementById("sidebar");
+    if(tipo === "usuario2"){
+        sidebar.innerHTML = `
+            <div class="sidebar-header">
+                <span class="close-btn" onclick="toggleMenu()">✖</span>
+            </div>
+            <a href="sistemas.html">Registro</a>
+            <a href="usuarios/mis_solicitudes.html">Mis solicitudes</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+    if(tipo === "admin"){
+        sidebar.innerHTML = `
+            <div class="sidebar-header">
+                <span class="close-btn" onclick="toggleMenu()">✖</span>
+            </div>
+            <a href="sistemas.html">Registro</a>
+            <a href="#">Lista de registro</a>
+            <a href="perfil.html">Perfil</a>
+            <a href="usuarios/ver_usuarios.html">Usuarios</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+});
+
+function formatoTexto(texto){
+    if(!texto) return "";
+
+    texto = texto.toLowerCase().trim();
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+let registros = [];
+   function cargarDatos(){
+    fetch("https://blacheres-app.onrender.com/lista.php")
+    .then(res => res.json())
+    .then(data => {
+        registros = data;
+        mostrarRegistros(); 
+    });
+}
+
+let lista = document.getElementById("lista");
+let opcionesEstado = ["","Sin empezar","Terminado","Cancelado","Pendiente"];
+function mostrarRegistros(){
+lista.innerHTML = "";
+registros.forEach((r,i)=>{
+
+if(!r.fecha_manual || r.fecha_manual === "0000-00-00"){
+    r.fecha_manual = "";
+} else if(r.fecha_manual.includes("-")){
+    let partes = r.fecha_manual.split("-");
+    if(partes.length === 3){
+        r.fecha_manual = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+}
+if(!r.hora_manual || r.hora_manual === "00:00:00"){
+    r.hora_manual = "";
+} else if(r.hora_manual.includes(":")){
+    let partes = r.hora_manual.split(":");
+    if(partes.length >= 2){
+        r.hora_manual = `${partes[0]}:${partes[1]}`; // solo HH:MM
+    }
+}
+if(!r.estado) r.estado="Sin empezar";
+let claseUrgencia = "";
+if(r.urgencia==="Alta") claseUrgencia="urgencia-alta";
+if(r.urgencia==="Media") claseUrgencia="urgencia-media";
+if(r.urgencia==="Baja") claseUrgencia="urgencia-baja";
+
+lista.innerHTML += `
+<tr>
+<td>${r.fecha || ""}</td>
+
+<td class="wrap">${(r.hora || "").substring(0,5)}</td>
+
+<td class="wrap" contenteditable="true"  onblur="guardarCambio(${i},'solicitante',this.innerText)">
+${r.solicitante || ""}</td>
+
+<td class="wrap ${claseUrgencia}" onclick="editarSelect(${i},'urgencia',this,opcionesUrgencia)"> 
+${r.urgencia || ""} </td>
+
+<td class="wrap" onclick="editarSelect(${i},'origen',this,opcionesOrigen)">
+${r.origen || ""} </td>
+
+<td class="wrap">
+${formatoTexto(r.observaciones)} </td>
+
+<td class="wrap" contenteditable="true" oninput="formatearFecha(this,'fecha'); guardarCambio(${i},'fecha_manual',this.innerText)">
+${r.fecha_manual} </td>
+
+<td class="wrap" contenteditable="true" oninput="formatearFecha(this,'hora'); guardarCambio(${i},'hora_manual',this.innerText)">
+${r.hora_manual} </td>
+
+<td class="wrap"> <select onchange="guardarCambio(${i},'estado',this.value)"> ${opcionesEstado.map(op => ` <option value="${op}" ${op===r.estado?"selected":""}>${op}</option>
+`).join("")}
+</select>
+</td>
+
+<td class="wrap" contenteditable="true" onblur="guardarCambio(${i},'observacion_general',this.innerText)">
+${formatoTexto(r.observacion_general)} </td>
+
+<td>
+    <div style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+
+        <button onclick="eliminar(${i})" title="Eliminar"> <i class="fa-solid fa-trash"></i></button>
+
+        <button onclick="exportarPDF()" title="Exportar PDF"> <i class="fa-solid fa-file-pdf"></i></button>
+       
+        <button onclick="exportarExcel()" title="Exportar Excel"> <i class="fa-solid fa-file-excel"></i></button>
+    </div>
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("contador").innerText =
+"Total de solicitudes: " + registros.length;
+}
+function abrirFecha(){
+    document.getElementById("fechaModal").style.display = "flex";
+}
+
+function cerrarFecha(){
+    document.getElementById("fechaModal").style.display = "none";
+}
+
+function eliminarPorFecha(){
+    let fecha = document.getElementById("fechaEliminar").value;
+    let mensaje = document.getElementById("mensajeFecha");
+    if(!fecha){
+        mensaje.innerText = "⚠️ Selecciona una fecha";
+        return;
+    }
+    cerrarFecha();
+    mostrarConfirm("¿Eliminar registros de la fecha seleccionada?", (ok)=>{
+        if(!ok){
+            abrirFecha(); 
+            return;
+        }
+
+        fetch("https://blacheres-app.onrender.com/eliminar_por_fecha.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fecha: fecha })
+        })
+        .then(res => res.text())
+        .then(data => {
+            if(data === "SIN_REGISTROS"){
+                mostrarToast("⚠️ No hay registros en esa fecha");
+                return;
+            }
+
+            if(data === "OK"){
+                mostrarToast("🗑️ Registros eliminados");
+                document.getElementById("fechaEliminar").value = "";
+                cargarDatos();
+            } else {
+                mostrarToast("Error: " + data);
+            }
+        });
+    });
+}
+
+function formatearFecha(elemento, tipo){
+    let valor = elemento.innerText.replace(/\D/g, '');
+    if(tipo === "fecha"){
+        if(valor.length > 8) valor = valor.slice(0,8);
+
+        let dia = valor.slice(0,2);
+        let mes = valor.slice(2,4);
+        let año = valor.slice(4,8);
+
+        if(parseInt(dia) > 31) dia = "31";
+        if(parseInt(mes) > 12) mes = "12";
+
+        let resultado = dia;
+        if(mes) resultado += "/" + mes;
+        if(año) resultado += "/" + año;
+        elemento.innerText = resultado;
+    } else if(tipo === "hora"){
+        if(valor.length > 4) valor = valor.slice(0,4);
+        let h = valor.slice(0,2);
+        let m = valor.slice(2,4);
+
+        if(parseInt(h) > 23) h = "23";
+        if(parseInt(m) > 59) m = "59";
+
+        let resultado = h;
+        if(m) resultado += ":" + m;
+        elemento.innerText = resultado;
+    }
+
+    let range = document.createRange();
+    let sel = window.getSelection();
+    range.selectNodeContents(elemento);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+function formatearFechaExport(valor){
+    if(!valor || valor === "0000-00-00") return "";
+
+    if(valor.includes("-")){
+        let partes = valor.split("-");
+        if(partes.length === 3){
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+    }
+
+    if(valor.includes("/")){
+        let partes = valor.split("/");
+        if(partes.length === 3){
+            return `${partes[0]}/${partes[1]}/${partes[2]}`;
+        }
+    }
+
+    return valor;
+}
+
+function getValor(td){
+    return td.querySelector("input")?.value ||
+           td.querySelector("select")?.value ||
+           td.innerText.trim();
+}
+
+function guardarCambio(i, campo, valor){
+    valor = valor.trim();
+   
+    if(campo === "hora_manual" && valor){
+        if(valor.length === 5){ 
+            valor = valor + ":00"; 
+        }
+    }
+
+    if(campo === "fecha_manual" && valor){
+    let valorMostrar = valor; 
+    let valorBD = valor;      
+
+    if(valor.includes("/")){
+        let partes = valor.split("/");
+        if(partes.length === 3){
+            valorBD = `${partes[2]}-${partes[1]}-${partes[0]}`; // BD
+        }
+    }
+
+    registros[i][campo] = valorBD; 
+
+} else {
+    registros[i][campo] = valor;
+}
+
+    let registro = {
+        id: registros[i].id,
+        solicitante: registros[i].solicitante || "",
+        urgencia: registros[i].urgencia || "",
+        origen: registros[i].origen || "",
+        observaciones: registros[i].observaciones || "",
+        fecha_manual: registros[i].fecha_manual || "",
+        hora_manual: registros[i].hora_manual || "",
+        estado: registros[i].estado || "",
+        observacion_general: registros[i].observacion_general || ""
+    };
+
+    fetch("https://blacheres-app.onrender.com/update.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registro)
+    })
+    .then(res => res.text())
+    .then(data => {
+        console.log("Respuesta:", data);
+    });
+}
+
+function eliminar(i){
+    let id = registros[i].id;
+    mostrarConfirm("¿Eliminar registro?", (ok)=>{
+        if(!ok) return;
+        fetch("https://blacheres-app.onrender.com/eliminar.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+        })
+        .then(res => res.text())
+        .then(data => {
+            if(data === "OK"){
+                mostrarToast("🗑️ Eliminado");
+                cargarDatos();
+            } else {
+                mostrarToast("Error: " + data);
+            }
+        });
+    });
+}
+
+function exportarPDF(){
+const { jsPDF } = window.jspdf;
+let doc = new jsPDF('landscape');
+let datos = registros.map(r=>[
+    r.fecha || "",
+    r.hora || "",
+    r.solicitante || "",
+    r.urgencia || "",
+    r.origen || "",
+    r.observaciones || "",
+    formatearFechaExport(r.fecha_manual),
+    r.hora_manual|| "",
+    r.estado || "",
+    r.observacion_general || ""
+]);
+
+if(datos.length === 0){
+    mostrarToast("❌ No hay registros para exportar");
+    return;
+}
+doc.setFontSize(14);
+doc.text("Lista de registros", 14, 15);
+doc.autoTable({
+    startY: 20,
+    head: [["Fecha","Hora","Solicitante","Urgencia","Origen","Obs","Fecha Manual","Hora Manual","Estado","Obs General"]],
+    body: datos,
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [100, 149, 237] }
+});
+doc.save("registros.pdf");
+}
+
+function exportarExcel(){
+let datos = [
+["Fecha","Hora","Solicitante","Urgencia","Origen","observaciones","Fecha Manual","Hora Manual","Estado","observacion general"]
+];
+datos.push(...registros.map(r=>[
+    r.fecha || "",
+    r.hora || "",
+    r.solicitante || "",
+    r.urgencia || "",
+    r.origen || "",
+    r.observaciones || "",
+    formatearFechaExport(r.fecha_manual),
+    r.hora_manual || "",
+    r.estado || "",
+    r.observacion_general || ""
+]));
+
+if(registros.length === 0){
+    mostrarToast("❌ No hay registros para exportar");
+    return;
+}
+let wb = XLSX.utils.book_new();
+let ws = XLSX.utils.aoa_to_sheet(datos);
+ws["!cols"] = [
+{wch:12},{wch:10},{wch:20},{wch:12},{wch:18},
+{wch:28},{wch:28},{wch:15},{wch:12},{wch:15}
+];
+XLSX.utils.book_append_sheet(wb, ws, "Registros");
+XLSX.writeFile(wb,"registros.xlsx");
+}
+
+cargarDatos();
+
+</script>
+
+</body>
+</html>

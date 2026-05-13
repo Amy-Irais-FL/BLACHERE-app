@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACHERE ILUMINACION MEXICO: PERFIL</title>
+    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="icon" href="css/ico.ico">
+
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="close-btn" onclick="toggleMenu()">✖</span>
+    </div>
+    <a href="sistemas.html">Registro</a>
+    <a href="Solicitante1.html">Lista de registro</a>
+    <a href="#">Perfil</a>
+    <a href="usuarios/mis_solicitudes.html">Mis solicitudes</a>
+    <a href="usuarios/ver_usuarios.html">Usuarios</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</div>
+
+<div class="topbar">
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <h3>Solicitudes Para Sistemas</h3>
+</div>
+
+<div class="container">
+<div class="perfil">
+<div class="imagen">
+    <img src="css/blachere1.png">
+</div>
+
+
+<div class="datos">
+
+<h2>PERFIL:</h2>
+<div class="linea-pass"><label>Usuario actual:</label><br>
+<span id="usuarioMostrado">admin</span></div>
+
+<div class="edit-box">
+    <input type="text" id="usuarioNuevo" disabled>
+    <button onclick="editarUsuario()">Cambiar</button>
+</div>
+<br>
+<div class="linea-pass"><label>Contraseña actual:</label><br>
+<span id="passwordMostrada">••••</span>
+<span class="ojo" onclick="verActualPassword()">👁️</span></div>
+
+<div class="edit-box">
+    <input type="password" id="passwordNueva" placeholder="Nueva contraseña" disabled>
+    <span class="ojo" onclick="verPassword()">👁️</span>
+    <button onclick="editarPassword()">Cambiar</button>
+</div>
+<p id="mensajeConfir" class="mensaje"></p>
+
+</div>
+</div>
+</div>
+
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Cerrar sesión</h3>
+    <p>¿Seguro que deseas salir?</p>
+    <div style="margin-top:15px;">
+        <center>
+      <button onclick="confirmarLogout()" style="background:#dc3545;color:white;">Sí, salir</button>
+      <button onclick="cerrarLogout()" style="margin-left:10px;">Cancelar</button>
+    </center>
+    </div>
+  </div>
+</div>
+<script>
+    let passwordReal = "";
+function toggleMenu(){
+    let sidebar = document.getElementById("sidebar");
+    if(sidebar.style.left === "0px"){
+        sidebar.style.left = "-260px";
+    }else{
+        sidebar.style.left = "0px";
+    }
+}
+
+let editando = false;
+
+window.onload = function(){
+
+    fetch("https://blacheres-app.onrender.com/usuarios.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accion: "obtenerSesion" })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.estado === "OK"){
+            document.getElementById("usuarioMostrado").innerText = data.usuario;
+            document.getElementById("usuarioNuevo").value = data.usuario;
+            passwordReal = data.password;
+            document.getElementById("passwordMostrada").innerText = "••••";
+        }else{
+            alert("No hay sesión activa");
+            window.location.href = "index.html";
+        }
+
+    });
+}
+
+function verActualPassword(){
+    let label = document.getElementById("passwordMostrada");
+    if(label.innerText === "••••"){
+        label.innerText = passwordReal; // 👁️ muestra real
+    }else{
+        label.innerText = "••••"; // 🔒 oculta
+    }
+}
+
+let editandoUsuario = false;
+let editandoPassword = false;
+
+function editarUsuario(){
+    let input = document.getElementById("usuarioNuevo");
+    let mensajes = document.getElementById("mensajeConfir");
+
+    if(!editandoUsuario){
+        input.disabled = false;
+        input.focus();
+        editandoUsuario = true;
+    }else{
+
+        if(input.value.trim() === ""){
+            mensajes.innerText = "❌ Usuario vacío";
+            return;
+        }
+
+        fetch("https://blacheres-app.onrender.com/usuarios.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                accion: "actualizar",
+                usuarioNuevo: input.value,
+                password: "" // 👈 no cambia password
+            })
+        })
+        .then(res => res.text())
+        .then(data => {
+            if(data.trim() === "OK"){
+                mensajes.innerText = "✅ Usuario actualizado";
+                document.getElementById("usuarioMostrado").innerText = input.value;
+            }else{
+                mensajes.innerText = "❌ Error";
+            }
+        });
+
+        input.disabled = true;
+        editandoUsuario = false;
+    }
+}
+
+function editarPassword(){
+    let input = document.getElementById("passwordNueva");
+    let mensajes = document.getElementById("mensajeConfir");
+
+    if(!editandoPassword){
+        input.disabled = false;
+        input.focus();
+        editandoPassword = true;
+    }else{
+        if(input.value.trim() === ""){
+            mensajes.innerText = "❌ Contraseña vacía";
+            return;
+        }
+        fetch("https://blacheres-app.onrender.com/usuarios.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                accion: "actualizar",
+                usuarioNuevo: document.getElementById("usuarioMostrado").innerText,
+                password: input.value
+            })
+        })
+        .then(res => res.text())
+        .then(data => {
+            if(data.trim() === "OK"){
+                mensajes.innerText = "✅ Contraseña actualizada";
+            }else{
+                mensajes.innerText = "❌ Error";
+            }
+        });
+
+        input.disabled = true;
+        editandoPassword = false;
+    }
+}
+
+function editar(){
+    let usuarioInput = document.getElementById("usuarioNuevo");
+    let passNueva = document.getElementById("passwordNueva");
+    let passConfirmar = document.getElementById("passwordConfirmar");
+    let boton = document.getElementById("btnEditar");
+    let mensajes = document.getElementById("mensajeConfir");
+
+    if(!editando){
+        usuarioInput.disabled = false;
+        passNueva.disabled = false;
+        passConfirmar.disabled = false;
+
+        boton.innerText = "Guardar";
+        editando = true;
+    }else{
+        if(usuarioInput.value.trim() === ""){
+            mensajes.innerText = "❌ Usuario vacío";
+            return;
+        }
+
+        if(passNueva.value !== passConfirmar.value){
+            mensajes.innerText = "❌ Las contraseñas no coinciden";
+            return;
+        }
+
+        fetch("https://blacheres-app.onrender.com/usuarios.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                accion: "actualizar",
+                usuarioNuevo: usuarioInput.value,
+                password: passNueva.value
+            })
+        })
+        .then(data => {
+        if(data.trim() === "OK"){
+            mensajes.innerText = "✅ Guardado correctamente";
+            document.getElementById("usuarioMostrado").innerText = usuarioInput.value;
+        }else if(data.trim() === "NO_SESSION"){
+            mensajes.innerText = "❌ Sesión expirada";
+            window.location.href = "index.html";
+        }else{
+            mensajes.innerText = "❌ Error: " + data;
+        }
+});
+
+        usuarioInput.disabled = true;
+        passNueva.disabled = true;
+        passConfirmar.disabled = true;
+
+        boton.innerText = "Cambiar";
+        editando = false;
+    }
+}
+
+function verPassword(){
+    let pass = document.getElementById("passwordNueva");
+    if(!pass) return;
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+function cerrarSesion(){
+    document.getElementById("logoutModal").style.display = "flex";
+}
+function cerrarLogout(){
+    document.getElementById("logoutModal").style.display = "none";
+}
+function confirmarLogout(){
+    fetch("https://blacheres-app.onrender.com/logout.php")
+    .then(res => res.text())
+    .then(data => {
+        console.log("LOGOUT:", data); // 👈 DEBUG
+        if(data.trim() === "OK"){
+            localStorage.clear();
+            window.location.href = "index.html";
+        }else{
+            alert("Error al cerrar sesión");
+        }
+    })
+    .catch(()=>{
+        alert("Error al cerrar sesión");
+    });
+}
+
+// ================= CONTROL DE SESIÓN Y MENÚ =================
+fetch("https://blacheres-app.onrender.com/sesion.php")
+.then(res => res.json())
+.then(data => {
+    if(data === "NO"){
+        window.location.href = "index.html";
+        return;
+    }
+    let tipo = data.tipo;
+    let sidebar = document.getElementById("sidebar");
+    if(tipo === "usuario2"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+            <a href="sistemas.html">Registro</a>
+            <a href="usuarios/mis_solicitudes.html">Mis solicitudes</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+    if(tipo === "admin"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+            <a href="sistemas.html">Registro</a>
+            <a href="Solicitante1.html">Lista de registro</a>
+            <a href="#">Perfil</a>
+            <a href="usuarios/ver_usuarios.html">Usuarios</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+});
+</script>
+</body>
+</html>

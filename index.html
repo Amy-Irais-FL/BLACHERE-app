@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACHERE ILUMINACION MEXICO: SOLICITUDES</title>
+<link rel="stylesheet" href="usuarios/estilos3.css">
+<link rel="icon" href="css/ico.ico">
+</head>
+
+<body>
+
+<div class="container">
+    <h2 id="titulo">Iniciar sesión</h2>
+
+    <!-- LOGIN -->
+    <div id="loginBox">
+        <input type="text" id="usuario" placeholder="Usuario">
+        <div class="password-box">
+            <input type="password" id="password" placeholder="Contraseña">
+            <span onclick="togglePass('password', this)">🙈</span></div>
+        <button onclick="login()">Entrar</button>
+        <p onclick="mostrarRegistro()">Crear cuenta</p>
+        
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="registroBox" style="display:none;">
+        <input type="text" id="newUsuario" placeholder="Usuario">
+        <div class="password-box">
+            <input type="password" id="newPassword" placeholder="Contraseña">
+            <span onclick="togglePass('newPassword', this)">🙈</span></div>
+        <div class="password-box">
+            <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
+            <span onclick="togglePass('confirmPassword', this)">🙈</span></div>
+        <button onclick="registrar()">Crear cuenta</button>
+        <button onclick="mostrarLogin()">Cancelar</button>
+    </div>
+
+    <p id="mensajeLogin"></p>
+    <p id="mensajeRegistro"></p>
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>

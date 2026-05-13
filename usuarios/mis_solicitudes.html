@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACHERE ILUMINACION MEXICO: MIS SOLICITUDES</title>
+    <link rel="stylesheet" href="estilos1.css">
+    <link rel="icon" href="../css/ico.ico">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="close-btn" onclick="toggleMenu()">✖</span>
+    </div>
+    <a href="../sistemas.html">Registro</a>
+    <a href="../Solicitante1.html">Lista de registro</a>
+    <a href="../perfil.html">Perfil</a>
+    <a href="#">mis solicitudes</a>
+    <a href="ver_usuarios.html">Usuarios</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</div>
+
+<div class="topbar">
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <h3>Solicitudes Para Sistemas</h3>
+</div>
+
+<div class="container-grande">
+    <h2>Mis solicitudes</h2>
+    <div class="main-container">
+    <div id="listaSolicitudes"></div>
+    </div>
+</div>
+<p id="mensaje"></p>
+
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Cerrar sesión</h3>
+    <p>¿Seguro que deseas salir?</p>
+
+    <div style="margin-top:15px;">
+      <button onclick="confirmarLogout()" style="background:#dc3545;color:white;">Sí, salir</button>
+      <button onclick="cerrarLogout()" style="margin-left:10px; background:#0b5ed7; color:white;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Confirmación</h3>
+    <p>¿Reenviar correo y marcar como pendiente?</p>
+
+    <div style="margin-top:15px;">
+      <button onclick="confirmarAccion()" style="background:#dc3545;color:white;">
+        Sí, continuar
+      </button>
+      <button onclick="cerrarConfirm()" style="margin-left:10px;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+    let idPendiente = null;
+
+function toggleMenu(){
+    let sidebar = document.getElementById("sidebar");
+    if(sidebar.style.left === "0px"){
+        sidebar.style.left = "-260px";
+    }else{
+        sidebar.style.left = "0px";
+    }
+}    
+ function cerrarConfirm(){
+    document.getElementById("confirmModal").style.display = "none";
+    idPendiente = null;
+}
+function confirmarAccion(){
+    if(!idPendiente) return;
+    fetch("https://blacheres-app.onrender.com/usuarios/reenviar_correo.php", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ id: idPendiente })
+    });
+    fetch("https://blacheres-app.onrender.com/usuarios/estado.php",{    
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            id: idPendiente,
+            estado: "Pendiente"
+        })
+    })
+    .then(()=> location.reload());
+}
+
+function cerrarSesion(){
+    document.getElementById("logoutModal").style.display = "flex";
+}
+function cerrarLogout(){
+    document.getElementById("logoutModal").style.display = "none";
+}
+function confirmarLogout(){
+    fetch("https://blacheres-app.onrender.com/logout.php")
+    .then(()=>{
+        localStorage.clear();
+        window.location.href = "../index.html";
+    })
+    .catch(()=>{
+        alert("Error al cerrar sesión");
+    });
+}
+
+    function formatoTexto(texto){
+    if(!texto) return "";
+    texto = texto.toLowerCase().trim();
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+    function cargarSolicitudes(){
+    fetch("https://blacheres-app.onrender.com/sesion.php")
+    .then(res => res.json())
+    .then(user => {
+        console.log("USUARIO:", user);
+        fetch("https://blacheres-app.onrender.com/usuarios/mis_solicitudes.php", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({
+                usuario: user.usuario
+            })
+        })
+        .then(res => res.text())
+        .then(text => {
+            console.log("RESPUESTA:", text);
+            let data = JSON.parse(text);
+            let contenedor = document.getElementById("listaSolicitudes");
+            if(data.length === 0){
+                contenedor.innerHTML = "⚠️ No tienes solicitudes";
+                return;
+            }
+            contenedor.innerHTML = "";
+            data.forEach(r => {
+                contenedor.innerHTML += `
+                <div class="card" data-id="${r.id}">
+                    <h4>📌 ${r.origen}</h4>
+                    <p>📅 <b>Fecha:</b> ${r.fecha}</p>
+                    <p>⏰ <b>Hora:</b> ${(r.hora || "").substring(0,5)}</p>
+                    <p>
+                    ⚡ <b>Urgencia:</b>
+                    <span class="urgencia-${(r.urgencia || "").toLowerCase()}">
+                    ${r.urgencia}
+                    </span>
+                    </p>
+                    <p>
+                    📝 <b>Observación:</b>
+                    ${formatoTexto(r.observaciones)}
+                    </p>
+                    <button onclick="realizado(${r.id})">
+                    ✔ Realizado
+                    </button>
+                    <button onclick="noRealizado(${r.id})">
+                    ❌ No realizado
+                    </button>
+                </div>
+                `;
+            });
+        })
+        .catch(err => {
+            console.log("ERROR:", err);
+        });
+    });
+}
+
+function realizado(id){
+    let ahora = new Date();
+    let fecha = ahora.getFullYear() + "-" +
+                String(ahora.getMonth()+1).padStart(2,'0') + "-" +
+                String(ahora.getDate()).padStart(2,'0');
+
+    let hora = String(ahora.getHours()).padStart(2,'0') + ":" +
+               String(ahora.getMinutes()).padStart(2,'0') + ":00";
+    fetch("https://blacheres-app.onrender.com/usuarios/estado.php", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            id: id,
+            estado: "Terminado",
+            fecha_manual: fecha,
+            hora_manual: hora
+        })
+    })
+    .then(res=>res.text())
+    .then(()=>{
+        document.querySelector(`[data-id='${id}']`).remove();
+    });
+}
+
+function noRealizado(id){
+    idPendiente = id;
+    document.getElementById("confirmModal").style.display = "flex";
+}
+
+fetch("https://blacheres-app.onrender.com/sesion.php")
+.then(res => res.json())
+.then(data => {
+
+    if(data === "NO"){
+        window.location.href = "../index.html";
+        return;
+    }
+
+    let tipo = data.tipo;
+    let sidebar = document.getElementById("sidebar");
+    if(tipo === "usuario2"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+            <a href="../sistemas.html">Registro</a>
+            <a href="#">Mis solicitudes</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+    if(tipo === "admin"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+            <a href="../sistemas.html">Registro</a>
+            <a href="../Solicitante1.html">Lista de registro</a>
+            <a href="../perfil.html">Perfil</a>
+            <a href="ver_usuarios.html">Usuarios</a>
+            <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+
+});
+
+cargarSolicitudes();
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACHERE ILUMINACION MEXICO: REGISTRO</title>
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="icon" href="css/ico.ico">
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="close-btn" onclick="toggleMenu()">✖</span>
+    </div>
+    <a href="#">registro</a>
+    <a href="Solicitante1.html">Lista de registro</a>
+    <a href="perfil.html">Perfil</a>
+    <a href="usuarios/mis_solicitudes.html">mis solicitudes</a>
+    <a href="usuarios/ver_usuarios.html">Usuarios</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</div>
+
+<div class="topbar">
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <h2>Solicitudes Para Sistemas</h2>
+</div>
+
+<div class="container">
+<h1>Registro de Solicitud</h1>
+<h3>Solicitante:</h3>
+<input type="text" id="solicitante1" onblur="this.value = capitalizarOracion(this.value)" required>
+
+<h3>Prioridad:</h3>
+<div class="radio-group">
+<label><input type="radio" name="urgente" value="Alta"> Alta</label><br>
+<label><input type="radio" name="urgente" value="Media"> Media</label><br>
+<label><input type="radio" name="urgente" value="Baja"> Baja</label>
+</div>
+
+<h3>Tema:</h3>
+<select id="origen" required>
+<option value="">Seleccione una opción</option>
+<option value="Soporte">Soporte</option>
+<option value="Drive">Drive</option>
+<option value="SAP">SAP</option>
+<option value="Internet">Internet</option>
+<option value="Respaldos">Respaldos</option>
+<option value="Control de accesos">Control de accesos</option>
+<option value="Camaras">Camaras</option>
+<option value="Otros">Otros</option>
+</select>
+
+<h3>Observaciones del solicitante:</h3>
+<input type="text" id="obs_solicitante1" onblur="this.value = capitalizarOracion(this.value)">
+
+<p id="mensaje" style="text-align:center; font-weight:bold;"></p>
+<div class="botones">
+<center>
+<button id="btnGuardar" onclick="guardar()">Enviar</button>
+</div>
+<p id="mensaje"></p>
+</div></center>
+
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Cerrar sesión</h3>
+    <p>¿Seguro que deseas salir?</p>
+
+    <div style="margin-top:15px;">
+      <button onclick="confirmarLogout()" style="background:#dc3545;color:white;">Sí, salir</button>
+      <button onclick="cerrarLogout()" style="margin-left:10px;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="sistemas.js" defer></script>
+</body>
+</html>

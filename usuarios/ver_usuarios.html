@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACHERE ILUMINACION MEXICO: USUARIOS</title>
+    <link rel="stylesheet" href="estilo2.css">
+    <link rel="icon" href="../css/ico.ico">
+
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="close-btn" onclick="toggleMenu()">✖</span>
+    </div>
+    <a href="sistemas.html">Registro</a>
+    <a href="Solicitante1.html">Lista de registro</a>
+    <a href="#">Perfil</a>
+    <a href="index.html">Solicitud</a>
+    <a href="usuarios/mis_solicitudes.html">mis solicitudes</a>
+    <a href="#l">Usuarios</a>
+    <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+</div>
+
+<div class="topbar">
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <h3>Solicitudes Para Sistemas</h3>
+</div>
+
+    <h2>Usuarios registrados</h2>
+    <input type="text" id="buscar" placeholder="Buscar usuario..." onkeyup="cargar()">
+    <br><br>
+    <table>
+        <thead>
+        <tr>
+        <th>No.</th>
+        <th>Usuario</th>
+        <th>Contraseña</th>
+        <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody id="tabla"></tbody>
+    </table>
+
+    <div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Cerrar sesión</h3>
+    <p>¿Seguro que deseas salir?</p>
+    <div style="margin-top:15px;">
+        <center>
+      <button onclick="confirmarLogout()" style="background:#dc3545;color:white;">Sí, salir</button>
+      <button onclick="cerrarLogout()" style="margin-left:10px;">Cancelar</button>
+    </center>
+    </div>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Eliminar usuario</h3>
+    <p>¿Seguro que deseas eliminar este usuario?</p>
+    <div style="margin-top:15px;">
+        <center>
+            <button id="btnConfirmDelete" style="background:#dc3545;color:white;">Sí, eliminar</button>
+            <button onclick="cerrarModalEliminar()" style="margin-left:10px;">Cancelar</button>
+        </center>
+    </div>
+  </div>
+</div>
+<script>
+function toggleMenu(){
+    let sidebar = document.getElementById("sidebar");
+
+    if(sidebar.style.left === "0px"){
+        sidebar.style.left = "-260px";
+    }else{
+        sidebar.style.left = "0px";
+    }
+}
+fetch("https://blacheres-app.onrender.com/sesion.php")
+.then(res => res.json())
+.then(data => {
+    if(data === "NO"){
+        window.location.href = "../index.html";
+        return;
+    }
+    let tipo = data.tipo;
+    let sidebar = document.getElementById("sidebar");
+    if(tipo === "usuario2"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+        <a href="../sistemas.html">Registro</a>
+        <a href="mis_solicitudes.html">Mis solicitudes</a>
+        <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+    if(tipo === "admin"){
+        sidebar.innerHTML = `
+        <div class="sidebar-header">
+            <span class="close-btn" onclick="toggleMenu()">✖</span>
+        </div>
+        <a href="../sistemas.html">Registro</a>
+        <a href="../Solicitante1.html">Lista de registro</a>
+        <a href="../perfil.html">Perfil</a>
+        <a href="#">Usuarios</a>
+        <a href="#" onclick="cerrarSesion()">Cerrar sesión</a>
+        `;
+    }
+});
+function cerrarSesion(){
+    document.getElementById("logoutModal").style.display = "flex";
+}
+function cerrarLogout(){
+    document.getElementById("logoutModal").style.display = "none";
+}
+function confirmarLogout(){
+    fetch("https://blacheres-app.onrender.com/logout.php")
+    .then(res => res.text())
+    .then(data => {
+        if(data.trim() === "OK"){
+            localStorage.clear();
+            window.location.href = "../index.html";
+        }else{
+            alert("Error al cerrar sesión");
+        }
+    })
+    .catch(() => {
+        alert("Error al cerrar sesión");
+    });
+}
+let idEliminar = null;
+function abrirModalEliminar(id){
+    idEliminar = id;
+    document.getElementById("deleteModal").style.display = "flex";
+}
+function cerrarModalEliminar(){
+    document.getElementById("deleteModal").style.display = "none";
+    idEliminar = null;
+}
+function cargar(){
+    let busqueda = document.getElementById("buscar").value;
+    fetch("https://blacheres-app.onrender.com/usuarios/usuarios2.php", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            accion:"listar",
+            busqueda:busqueda
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        let html = "";
+        data.forEach((u, index) => {
+            html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td contenteditable="true" id="u${u.id}">${u.usuario}</td>
+                <td id="p${u.id}" data-pass="${u.password}"> •••• </td>
+                <td>
+                    <button class="btn-guardar"onclick="editar(${u.id})">Guardar</button>
+                    <button class="btn-eliminar" onclick="abrirModalEliminar(${u.id})">Eliminar</button>
+                    <button class="btn-ojo" onclick="togglePass(${u.id}, this)"> 👁️ </button>
+                </td>
+            </tr>
+            `;
+        });
+        document.getElementById("tabla").innerHTML = html;
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Error cargando usuarios");
+    });
+}
+function togglePass(id, btn){
+    let celda = document.getElementById("p"+id);
+    let passReal = celda.getAttribute("data-pass");
+    if(celda.innerText === "••••"){
+        celda.innerText = passReal;
+        btn.innerText = "🙈";
+    }else{
+        celda.innerText = "••••";
+        btn.innerText = "👁️";
+    }
+}
+function editar(id){
+    let usuario = document.getElementById("u"+id).innerText;
+    fetch("https://blacheres-app.onrender.com/usuarios/usuarios2.php", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            accion:"editar",
+            id:id,
+            usuario:usuario
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.estado === "OK"){
+            alert("✅ Actualizado");
+            cargar();
+        }else{
+            alert("❌ Error");
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Error servidor");
+    });
+}
+function eliminar(id){
+    fetch("https://blacheres-app.onrender.com/usuarios/usuarios2.php", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            accion:"eliminar",
+            id:id
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.estado === "OK"){
+            cargar();
+        }else{
+            alert("Error al eliminar");
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Error servidor");
+    });
+}
+
+window.addEventListener("load", () => {
+    cargar();
+    document.getElementById("btnConfirmDelete").onclick = function(){
+        if(idEliminar === null) return;
+        eliminar(idEliminar);
+        cerrarModalEliminar();
+    };
+});
+</script>
+</body>
+</html>

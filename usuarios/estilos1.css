@@ -1,0 +1,182 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0;
+    padding:0;
+    background:linear-gradient(135deg,#ada8f8,#80e8ff);
+    overflow-x: hidden;
+}
+
+.container-grande{
+    width:100%;
+    max-width:1200px;
+    margin:7px auto 40px auto;
+    padding:40px;
+}
+
+h2{
+    text-align:center;
+    color:#222;
+    margin-bottom:40px;
+    font-weight:700;
+}
+
+#listaSolicitudes{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 320px));
+    justify-content:center;
+    gap:25px;
+}
+
+.card{
+    background:white;
+    width: 320;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    transition:0.3s;
+    border:1px solid #eee;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card h4{
+    text-align:center;
+    color:#0b5ed7;
+    margin-bottom:15px;
+    font-size:20px;
+    font-weight:700;
+}
+
+.card p{
+    margin:8px 0;
+    color:#000;
+    font-weight:600; /* 🔥 más gruesa */
+    font-size:15px;
+}
+
+.card button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.card button:first-of-type{
+    background:#0d6efd;
+    color:white;
+}
+
+.card button:first-of-type:hover{
+    background:#0c3b83;
+}
+
+/* BOTON NO REALIZADO */
+.card button:last-of-type{
+    background:#dc3545;
+    color:white;
+}
+
+.card button:last-of-type:hover{
+    background:#830c17;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:320px;
+}
+
+.modal-content button{
+    width:80%;
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    font-weight:600;
+}
+
+@media(max-width:600px){
+    .container-grande{
+        margin:20px;
+        padding:20px;
+    }
+}
+
+*{
+    box-sizing: border-box;
+}
+/* BARRA SUPERIOR */
+.topbar{
+    width:100%;
+    background: linear-gradient(90deg,#1e5fa8,#68cdec);
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    overflow: hidden;
+}
+
+.menu-btn{
+    font-size:26px;
+    cursor:pointer;
+}
+
+.sidebar{
+    position: fixed;
+    top:0;
+    left:-260px; 
+    width:260px;
+    height:100%;
+    background:#2c3e50;
+    color:white;
+    padding-top:20px;
+    transition:0.3s;
+    z-index:1000;
+}
+
+.sidebar a{
+    display:block;
+    padding:15px;
+    color:white;
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar a:hover{
+    background:#34495e;
+}
+
+.sidebar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 15px;
+}
+
+.close-btn{
+    cursor:pointer;
+    font-size:20px;
+}
