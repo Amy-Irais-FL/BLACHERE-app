@@ -1,0 +1,225 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0;
+    padding:0;
+   background:linear-gradient(135deg,#ada8f8,#80e8ff);
+   overflow-x: hidden;
+}
+
+.container{
+    width:100%;
+    max-width:450px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#096a93;
+}
+
+h3{
+    color:#444;
+}
+h2{
+    color:#f8f6f6;
+}
+
+input[type="text"], select{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:8px;
+    font-size:18px;
+    border:1px solid #ccc;
+}
+
+.radio-group{
+    margin-bottom:15px;
+}
+
+.botones{
+    align-items: center;
+}
+
+.botones button{
+    width:100%;
+    padding:15px;
+    max-width:300px;
+    border:none;
+    font-size: 18px;
+    border-radius:10px;
+    background:#1787f8;
+    color:white;
+    cursor:pointer;
+}
+
+.botones button:hover{
+    background:#0b4b67;
+}
+
+/* 🔥 CONTENEDOR CON SCROLL */
+.tabla-container {
+    width: 100%;
+    overflow-x: auto; /* 👈 evita que se rompa */
+}
+
+/* 🔥 CONTENEDOR */
+.tabla-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* 🔥 TABLA BLOQUEADA */
+table {
+    width: 1200px; /* 👈 tamaño TOTAL FIJO */
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* 🔥 COLUMNAS CON TAMAÑO EXACTO */
+th:nth-child(1), td:nth-child(1) { width: 90px; }   /* Fecha */
+th:nth-child(2), td:nth-child(2) { width: 100px; }  /* Hora */
+th:nth-child(3), td:nth-child(3) { width: 140px; }  /* Solicitante */
+th:nth-child(4), td:nth-child(4) { width: 90px; }   /* Urgencia */
+th:nth-child(5), td:nth-child(5) { width: 140px; }  /* Origen */
+th:nth-child(6), td:nth-child(6) { width: 180px; }  /* Obs */
+th:nth-child(7), td:nth-child(7) { width: 180px; }  /* Obs General */
+th:nth-child(8), td:nth-child(8) { width: 110px; }  /* Fecha Manual */
+th:nth-child(9), td:nth-child(9) { width: 90px; }   /* Hora Manual */
+th:nth-child(10), td:nth-child(10) { width: 120px; }/* Estado */
+th:nth-child(11), td:nth-child(11) { width: 160px; }/* Acciones */
+
+th, td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 6px;
+    font-size: 13px;
+}
+
+td select {
+    width: 100%;
+    height: 28px;
+    font-size: 12px;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+td button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    font-size: 12px;
+}
+/* 🔥 MODAL */
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 999;
+
+justify-content: center;
+align-items: center;
+}
+
+.modal-content {
+background: #f2f2f2;
+width: 300px;
+padding: 20px;
+border-radius: 15px;
+text-align: center;
+}
+
+.modal-content input {
+width: 80%;
+padding: 10px;
+margin: 8px 0;
+border-radius: 8px;
+border: 1px solid #ccc;
+}
+
+.modal-content button {
+width: 60%;
+padding: 10px;
+margin-top: 8px;
+border-radius: 8px;
+border: none;
+background: #2f7edb;
+color: white;
+cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #1e5fa8;
+}
+
+#mensaje{
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+*{
+    box-sizing: border-box;
+}
+/* BARRA SUPERIOR */
+.topbar{
+    width:100%;
+    background: linear-gradient(90deg,#1e5fa8,#68cdec);
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    overflow: hidden;
+}
+
+.menu-btn{
+    font-size:26px;
+    cursor:pointer;
+}
+
+.sidebar{
+    position: fixed;
+    top:0;
+    left:-260px; 
+    width:260px;
+    height:100%;
+    background:#2c3e50;
+    color:white;
+    padding-top:20px;
+    transition:0.3s;
+    z-index:1000;
+}
+
+.sidebar a{
+    display:block;
+    padding:15px;
+    color:white;
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar a:hover{
+    background:#34495e;
+}
+
+.sidebar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 15px;
+}
+
+.close-btn{
+    cursor:pointer;
+    font-size:20px;
+}

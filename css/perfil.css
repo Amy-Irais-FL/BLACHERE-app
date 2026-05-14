@@ -1,0 +1,305 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0;
+    padding:0;
+    background:linear-gradient(135deg,#ada8f8,#80e8ff);
+    overflow-x:hidden;
+    min-height:100vh;
+}
+*{
+    box-sizing:border-box;
+}
+.topbar{
+    width:100%;
+    background:linear-gradient(90deg,#1e5fa8,#68cdec);
+    color:white;
+    padding:15px 20px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    position:sticky;
+    top:0;
+    z-index:900;
+}
+.topbar h3{
+    margin:0;
+    font-size:20px;
+    word-break:break-word;
+}
+.menu-btn{
+    font-size:28px;
+    cursor:pointer;
+}
+.sidebar{
+    position:fixed;
+    top:0;
+    left:-260px;
+    width:260px;
+    height:100%;
+    background:#2c3e50;
+    color:white;
+    padding-top:20px;
+    transition:0.3s;
+    z-index:1000;
+    overflow-y:auto;
+}
+.sidebar a{
+    display:block;
+    padding:15px;
+    color:white;
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    font-size:15px;
+}
+.sidebar a:hover{
+    background:#34495e;
+}
+.sidebar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 15px;
+}
+.close-btn{
+    cursor:pointer;
+    font-size:22px;
+}
+.container{
+    width:90%;
+    max-width:950px;
+    margin:40px auto;
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0px 10px 25px rgba(0,0,0,0.2);
+}
+.perfil{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:40px;
+}
+.imagen{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.imagen img{
+    width:280px;
+    max-width:100%;
+    height:auto;
+    border-radius:50%;
+    object-fit:cover;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+.datos{
+    flex:1;
+    width:100%;
+}
+h2{
+    color:#096a93;
+    margin-top:0;
+    font-size:28px;
+}
+label{
+    font-size:18px;
+    font-weight:600;
+}
+#usuarioMostrado,
+#passwordMostrada{
+    font-size:18px;
+    color:#333;
+    word-break:break-word;
+}
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+    outline:none;
+    transition:0.2s;
+}
+input:focus{
+    border-color:#1e5fa8;
+    box-shadow:0 0 5px rgba(30,95,168,0.3);
+}
+button{
+    border:none;
+    border-radius:10px;
+    background:#1787f8;
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.2s;
+}
+button:hover{
+    background:#0b4b67;
+    transform:scale(1.02);
+}
+.edit-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+}
+.edit-box input{
+    flex:1;
+    min-width:0;
+    height:45px;
+}
+.edit-box button{
+    width:120px;
+    min-width:120px;
+    height:45px;
+    padding:0 10px;
+}
+.linea-pass{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:15px;
+}
+.ojo{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+    border-radius:50%;
+    background:#f1f1f1;
+    transition:0.2s;
+}
+.ojo:hover{
+    background:#ddd;
+}
+.mensaje{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    word-break:break-word;
+}
+.mensaje.error{
+    color:red;
+}
+.mensaje.ok{
+    color:green;
+}
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    z-index:999;
+    justify-content:center;
+    align-items:center;
+    padding:15px;
+}
+.modal-content{
+    background:#f2f2f2;
+    width:100%;
+    max-width:350px;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+}
+.modal-content input{
+    width:100%;
+}
+.modal-content button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+}
+
+@media(max-width:900px){
+    .container{
+        width:92%;
+        padding:30px;
+    }
+    .perfil{
+        flex-direction:column;
+        text-align:center;
+    }
+    .datos{
+        width:100%;
+    }
+    .imagen img{
+        width:220px;
+    }
+    .linea-pass{
+        justify-content:center;
+    }
+}
+@media(max-width:600px){
+    .topbar{
+        padding:14px;
+    }
+    .topbar h3{
+        font-size:16px;
+    }
+    .menu-btn{
+        font-size:24px;
+    }
+    .container{
+        width:95%;
+        margin:20px auto;
+        padding:20px;
+        border-radius:15px;
+    }
+    .perfil{
+        gap:20px;
+    }
+    .imagen img{
+        width:170px;
+    }
+    h2{
+        font-size:22px;
+        text-align:center;
+    }
+    label{
+        font-size:16px;
+    }
+    #usuarioMostrado,
+    #passwordMostrada{
+        font-size:16px;
+    }
+    .edit-box{
+        flex-direction:column;
+        align-items:stretch;
+    }
+    .edit-box button{
+        width:100%;
+        min-width:100%;
+    }
+    .linea-pass{
+        flex-direction:row;
+        justify-content:center;
+        text-align:center;
+    }
+    input{
+        font-size:15px;
+        padding:11px;
+    }
+    .mensaje{
+        font-size:16px;
+    }
+    .sidebar{
+        width:240px;
+    }
+    .sidebar a{
+        font-size:14px;
+        padding:14px;
+    }
+    .modal-content{
+        padding:20px;
+    }
+}

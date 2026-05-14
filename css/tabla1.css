@@ -1,0 +1,365 @@
+body{
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-align:center;
+    background:linear-gradient(135deg,#ada8f8,#80e8ff);
+    margin:0;
+    padding:0px;
+    overflow-x: hidden;
+}
+h1{
+    margin-top:20px;
+    font-weight:600;
+    letter-spacing:1px;
+    color:#0c0c0c;
+}
+.tabla-container{
+    width: 100%;
+    overflow-x: auto;
+}
+table{
+    width: 99%;
+    margin:auto;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+th{
+    background: #0e5a74;
+    color:white;
+    padding:12px;
+    font-size: 13px;
+}
+td.wrap{
+    white-space: normal !important;
+    word-break: normal;      
+    overflow-wrap: break-word; 
+    overflow: visible;
+}
+td{
+    padding:8px;
+    border:1px solid #ddd;
+    font-size: 13px;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+tr:nth-child(even){
+    background:#f4f6f8;
+}
+th:last-child,
+td:last-child{
+    width:160px;
+}
+td:last-child{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+}
+button{
+    border:none;
+    padding:6px 8px;
+    border-radius:6px;
+    cursor:pointer;
+    transition: 0.2s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+button:hover{
+    transform: scale(1.05);
+}
+td input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font: inherit;
+}
+td select {
+    border: none;
+    outline: none;
+    background: transparent;
+    appearance: none;
+    width: 100%;
+    font: inherit;
+    cursor: pointer;
+}
+td select::-ms-expand {
+    display: none;
+}
+td:nth-child(5) select{
+    width: 100%;
+}
+.eliminar{ background:#ffc107; }
+.editar{ background:#6c757d; color:white;}
+.guardar{ background:#17a2b8; color:white;}
+.pdf{ background:#c82333; color:white;}
+.excel{ background:#218838; color:white;}
+.botones-final{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+.botones-final button{
+    background:#2c5364;
+    color:white;
+    padding:8px 15px;
+    border-radius:8px;
+    font-size:14px;
+}
+.botones-final button:hover{
+    background:#1b3a4b;
+}
+.acciones{
+    width:160px;
+}
+.acciones-btns{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    flex-wrap:nowrap;
+}
+.acciones-btns button{
+    padding:5px 7px;
+    font-size:13px;
+}
+.modal {
+display: none; 
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 999;
+justify-content: center;
+align-items: center;
+}
+.modal-content {
+background: #f2f2f2;
+width: 300px;
+padding: 20px;
+border-radius: 15px;
+text-align: center;
+}
+.modal-content input {
+width: 80%;
+padding: 10px;
+margin: 8px 0;
+border-radius: 8px;
+border: 1px solid #ccc;
+}
+.modal-content button {
+width: 60%;
+padding: 10px;
+margin-top: 8px;
+border-radius: 8px;
+border: none;
+background: #2f7edb;
+color: white;
+cursor: pointer;
+}
+.modal-content button:hover {
+  background: #1e5fa8;
+}
+td:empty {
+    background-color: transparent !important;
+}
+td {
+    background-color: white;
+}
+td[contenteditable="true"] {
+    background-color: #ffffff;
+}
+.toast{
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: none;
+    z-index: 999;
+    font-size: 14px;
+}
+.toast.show{
+    display: block;
+    animation: fadein 0.3s, fadeout 0.3s 2.7s;
+}
+@keyframes fadein{
+    from{opacity:0; bottom:0;}
+    to{opacity:1; bottom:20px;}
+}
+@keyframes fadeout{
+    from{opacity:1;}
+    to{opacity:0;}
+}
+*{
+    box-sizing: border-box;
+}
+.topbar{
+    width:100%;
+    background: linear-gradient(90deg,#1e5fa8,#68cdec);
+    color:white;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+.menu-btn{
+    font-size:26px;
+    cursor:pointer;
+}
+.sidebar{
+    position: fixed;
+    top:0;
+    left:-260px; 
+    width:260px;
+    height:100%;
+    background:#2c3e50;
+    color:white;
+    padding-top:20px;
+    transition:0.3s;
+    z-index:1000;
+}
+.sidebar a{
+    display:block;
+    padding:15px;
+    color:white;
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.sidebar a:hover{
+    background:#34495e;
+}
+.sidebar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 15px;
+}
+.titulo-topbar{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.close-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+@media screen and (max-width: 768px){
+    body{
+        padding:0;
+        overflow-x:hidden;
+    }
+    h1{
+        font-size:24px;
+        margin:15px 10px;
+    }
+    h3{
+        font-size:16px;
+    }
+    .topbar{
+        padding:12px;
+        gap:10px;
+    }
+    .topbar h3{
+        font-size:18px;
+        margin:0;
+    }
+    .menu-btn{
+        font-size:24px;
+    }
+    .sidebar{
+        width:220px;
+        left:-220px;
+    }
+    .sidebar a{
+        padding:14px;
+        font-size:15px;
+    }
+    .tabla-container{
+        width:100%;
+        overflow-x:auto;
+        padding:0 5px;
+    }
+    table{
+        min-width:1200px;
+        font-size:12px;
+    }
+    th{
+        font-size:12px;
+        padding:10px 6px;
+        white-space:nowrap;
+    }
+    td{
+        font-size:12px;
+        padding:6px;
+        min-width:90px;
+    }
+    td:last-child{
+        min-width:180px;
+    }
+    td:last-child div{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:5px;
+    }
+    button{
+        padding:6px;
+        font-size:12px;
+    }
+    .acciones-btns button{
+        font-size:12px;
+        padding:5px 6px;
+    }
+    .botones-final{
+        flex-direction:column;
+        align-items:center;
+        padding:10px;
+    }
+    .botones-final button{
+        width:95%;
+        max-width:320px;
+        font-size:14px;
+        padding:12px;
+    }
+    .modal-content{
+        width:90%;
+        max-width:340px;
+        padding:18px;
+    }
+    .modal-content h3{
+        font-size:18px;
+    }
+    .modal-content button{
+        width:100%;
+        margin-top:10px;
+    }
+    .toast{
+        width:90%;
+        text-align:center;
+        font-size:13px;
+    }
+    td select{
+        font-size:12px;
+    }
+    td input{
+        font-size:12px;
+    }
+    #contador{
+        font-size:15px;  
+        margin:10px;
+    }
+}
