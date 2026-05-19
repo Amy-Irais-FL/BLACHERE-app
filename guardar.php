@@ -125,18 +125,21 @@ if ($result) {
             <b>Fecha:</b> ".date("d/m/Y H:i")."
         ";
 
+if ($result) {
+    $mail = new PHPMailer(true);
+    try {
+        // CONFIG SMTP
         if($mail->send()){
             error_log("Correo enviado");
         }else{
             error_log("No enviado");
         }
-
-   } catch (Exception $e) {
-        error_log("ERROR_MAIL" . $mail->ErrorInfo);
+    } catch (Exception $e) {
+        error_log("ERROR_MAIL " . $mail->ErrorInfo);
     }
-
 } else {
     echo "Error BD";
 }
+ 
 pg_close($conn);
 ?>
