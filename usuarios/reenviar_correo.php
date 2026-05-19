@@ -51,15 +51,15 @@ if($row = pg_fetch_assoc($res)){
 
         $mail->SMTPDebug = 0;
         $mail->Debugoutput = 'error_log';
-        $mail->Timeout = 30;
+        $mail->Timeout = 60;
 
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'amyfernandezlargo@gmail.com';
         $mail->Password = 'zxvholbypvozdzsi';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
 
         $mail->SMTPOptions = [
             'ssl' => [
@@ -87,9 +87,9 @@ if($row = pg_fetch_assoc($res)){
         ";
 
         if($mail->send()){
-            error_log("Correo enviado");
+            echo "CORREO_ENVIADO";
         }else{
-            error_log("No enviado");
+            echo "ERROR_CORREO";
         }
 
     } catch (Exception $e) {
