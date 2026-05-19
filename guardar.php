@@ -76,7 +76,16 @@ $result = pg_query_params($conn,
 );
 // ===== SI GUARDÓ =====
 if ($result) {
-    echo "OK";
+    $mail = new PHPMailer(true);
+    try {
+        // SMTP
+        $mail->send();
+        echo "OK";
+    } catch (Exception $e) {
+        error_log("ERROR_MAIL " . $mail->ErrorInfo);
+        echo "OK_GUARDADO_ERROR_CORREO";
+    }
+}
     // ===== CORREO =====
     $mail = new PHPMailer(true);
 
@@ -84,15 +93,16 @@ if ($result) {
 
         $mail->SMTPDebug = 0;
         $mail->Debugoutput = 'error_log';
-        $mail->Timeout = 30;
+        $mail->Timeout = 60;
 
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'amyfernandezlargo@gmail.com';
         $mail->Password = 'zxvholbypvozdzsi';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
+        $mail->CharSet = 'UTF-8';
 
          $mail->SMTPOptions = [
             'ssl' => [
